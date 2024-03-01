@@ -21,8 +21,6 @@ import { RemotePreferences } from '@theia/remote/lib/electron-browser/remote-pre
 import { WorkspaceStorageService } from '@theia/workspace/lib/browser/workspace-storage-service';
 import { Command, QuickInputService } from '@theia/core';
 import { WorkspaceService } from '@theia/workspace/lib/browser/workspace-service';
-import { RemoteContainerConnectionProvider } from '../electron-common/remote-container-connection-provider';
-import { RemotePreferences } from '@theia/remote/lib/electron-browser/remote-preferences';
 
 export namespace RemoteContainerCommands {
     export const REOPEN_IN_CONTAINER = Command.toLocalizedCommand({
