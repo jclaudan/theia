@@ -54,13 +54,17 @@ export class NotebookCellContextManager implements NotebookCellContextManager, D
                 this.currentStore?.setContext(NOTEBOOK_CELL_MARKDOWN_EDIT_MODE, cellEdit);
                 this.onDidChangeContextEmitter.fire({ affects: keys => keys.has(NOTEBOOK_CELL_MARKDOWN_EDIT_MODE) });
             }));
-            this.toDispose.push(this.executionStateService.onDidChangeExecution(e => {
-                if (e.affectsCell(cell.uri)) {
-                    this.currentStore?.setContext(NOTEBOOK_CELL_EXECUTING, !!e.changed);
-                    this.currentStore?.setContext(NOTEBOOK_CELL_EXECUTION_STATE, e.changed?.state ?? 'idle');
-                    this.onDidChangeContextEmitter.fire({ affects: keys => keys.has(NOTEBOOK_CELL_EXECUTING) || keys.has(NOTEBOOK_CELL_EXECUTION_STATE) });
-                }
-            }));
+
+            if (cell.cellKind === CellKind.Code) {
+                this.toDispose.push(this.executionStateService.onDidChangeExecution(e => {
+                    if (e.affectsCell(cell.uri)) {
+                        this.currentStore?.setContext(NOTEBOOK_CELL_EXECUTING, !!e.changed);
+                        this.currentStore?.setContext(NOTEBOOK_CELL_EXECUTION_STATE, e.changed?.state ?? 'idle');
+                        this.onDidChangeContextEmitter.fire({ affects: keys => keys.has(NOTEBOOK_CELL_EXECUTING) || keys.has(NOTEBOOK_CELL_EXECUTION_STATE) });
+                    }
+                }));
+            }
+
             this.onDidChangeContextEmitter.fire({ affects: keys => true });
         }
     }
