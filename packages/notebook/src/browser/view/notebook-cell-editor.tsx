@@ -21,11 +21,13 @@ import { SimpleMonacoEditor } from '@theia/monaco/lib/browser/simple-monaco-edit
 import { MonacoEditorServices } from '@theia/monaco/lib/browser/monaco-editor';
 import { MonacoEditorProvider } from '@theia/monaco/lib/browser/monaco-editor-provider';
 import { DisposableCollection } from '@theia/core';
+import { NotebookViewportService } from './notebook-viewport-service';
 
 interface CellEditorProps {
     notebookModel: NotebookModel,
     cell: NotebookCellModel,
-    monacoServices: MonacoEditorServices
+    monacoServices: MonacoEditorServices,
+    notebookViewportService?: NotebookViewportService
 }
 
 const DEFAULT_EDITOR_OPTIONS = {
@@ -46,7 +48,17 @@ export class CellEditor extends React.Component<CellEditorProps, {}> {
 
     override componentDidMount(): void {
         this.disposeEditor();
-        this.initEditor();
+        if (!this.props.notebookViewportService || (this.container && this.props.notebookViewportService.isElementInViewport(this.container))) {
+            this.initEditor();
+        } else {
+            const disposable = this.props.notebookViewportService?.onDidChangeViewport(() => {
+                if (!this.editor && this.container && this.props.notebookViewportService!.isElementInViewport(this.container)) {
+                    this.initEditor();
+                    disposable.dispose();
+                }
+            });
+            this.toDispose.push(disposable);
+        }
     }
 
     override componentWillUnmount(): void {
@@ -89,11 +101,15 @@ export class CellEditor extends React.Component<CellEditorProps, {}> {
         this.editor?.refresh();
     };
 
+    protected estimateHeight(): string {
+        return this.props.cell.text.split('\n').length * 20 + 7 + 'px';
+    }
+
     override render(): React.ReactNode {
         return <div className='theia-notebook-cell-editor' onResize={this.handleResize} id={this.props.cell.uri.toString()}
-                    ref={container => this.setContainer(container)}>
+            ref={container => this.setContainer(container)} style={{ height: this.editor ? undefined : this.estimateHeight() }}>
 
         </div>;
-     }
+    }
 
 }

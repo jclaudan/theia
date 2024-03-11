@@ -31,7 +31,6 @@ import { NotebookCellToolbarFactory } from './view/notebook-cell-toolbar-factory
 import { createNotebookModelContainer, NotebookModel, NotebookModelFactory, NotebookModelProps } from './view-model/notebook-model';
 import { createNotebookCellModelContainer, NotebookCellModel, NotebookCellModelFactory, NotebookCellModelProps } from './view-model/notebook-cell-model';
 import { createNotebookEditorWidgetContainer, NotebookEditorWidgetContainerFactory, NotebookEditorProps, NotebookEditorWidget } from './notebook-editor-widget';
-import { NotebookCodeCellRenderer } from './view/notebook-code-cell-view';
 import { NotebookMarkdownCellRenderer } from './view/notebook-markdown-cell-view';
 import { NotebookActionsContribution } from './contributions/notebook-actions-contribution';
 import { NotebookExecutionService } from './service/notebook-execution-service';
@@ -79,7 +78,6 @@ export default new ContainerModule(bind => {
     bind(CommandContribution).toService(NotebookActionsContribution);
     bind(MenuContribution).toService(NotebookActionsContribution);
 
-    bind(NotebookCodeCellRenderer).toSelf().inSingletonScope();
     bind(NotebookMarkdownCellRenderer).toSelf().inSingletonScope();
     bind(NotebookMainToolbarRenderer).toSelf().inSingletonScope();
 
